@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPIN & FREE</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: white;
+  text-align: center;
+}
+
+/* HERO */
+.hero {
+  padding: 80px 20px;
+}
+
+.hero h1 {
+  font-size: 48px;
+  font-weight: 700;
+  color: #facc15;
+}
+
+.hero p {
+  margin-top: 15px;
+  font-size: 18px;
+  color: #cbd5f5;
+}
+
+/* BUTTON */
+.btn {
+  margin-top: 30px;
+  padding: 15px 40px;
+  font-size: 18px;
+  background: #22c55e;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background: #16a34a;
+  transform: scale(1.05);
+}
+
+/* CARD SECTION */
+.features {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 60px;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: #1e293b;
+  padding: 25px;
+  border-radius: 15px;
+  width: 250px;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  background: #334155;
+}
+
+.card h3 {
+  color: #facc15;
+  margin-bottom: 10px;
+}
+
+/* FOOTER */
+footer {
+  margin-top: 80px;
+  padding: 20px;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+/* ANIMATION */
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(30px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+.hero, .features {
+  animation: fadeIn 1s ease;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>🎰 SPIN & FREE 10K UP!</h1>
+  <p>Dapatkan kesempatan menang setiap hari dengan bonus gratis!</p>
+  <button class="btn">MAIN SEKARANG</button>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="card">
+    <h3>🎁 Bonus Gratis</h3>
+    <p>Claim saldo gratis tanpa deposit.</p>
+  </div>
+
+  <div class="card">
+    <h3>⚡ Proses Cepat</h3>
+    <p>Tanpa ribet, langsung bisa main.</p>
+  </div>
+
+  <div class="card">
+    <h3>🔥 Peluang Besar</h3>
+    <p>Kesempatan menang setiap hari.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  © 2026 Spin Free. All rights reserved.
+</footer>
+
+</body>
+</html>
