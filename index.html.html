@@ -3,167 +3,229 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lucky Spin Code</title>
+<title>Lucky Spin</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif;}
+:root{
+  --primary:#ff7a18;
+  --secondary:#ff3d00;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, sans-serif;
+}
 
 body{
-background:url("https://i.ibb.co/d0Rj3zmn/image.png") center/cover no-repeat fixed;
-color:#fff;text-align:center;
+  background:url("https://i.ibb.co/d0Rj3zmn/image.png") center/cover no-repeat fixed;
+  color:#fff;
+  text-align:center;
 }
 
 body::before{
-content:"";position:fixed;top:0;left:0;width:100%;height:100%;
-background:rgba(0,0,0,0.6);z-index:-1;
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+  z-index:-1;
 }
 
-h1{margin-top:30px;}
-
-.btn{
-padding:12px 25px;
-background:linear-gradient(135deg,#ff7a18,#ff3d00);
-border:none;border-radius:30px;color:#fff;
-cursor:pointer;margin-top:10px;
+.container{
+  max-width:400px;
+  margin:auto;
+  padding:20px;
 }
 
+h1{
+  margin-bottom:10px;
+}
+
+.subtitle{
+  opacity:0.8;
+  margin-bottom:15px;
+}
+
+/* INPUT */
 input{
-padding:10px;
-border-radius:10px;
-border:none;
-text-align:center;
-margin-top:15px;
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  margin-bottom:10px;
+  text-align:center;
 }
 
-canvas{margin-top:20px;}
+/* BUTTON */
+.btn{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:25px;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(255,100,0,0.4);
+}
+
+/* CANVAS */
+canvas{
+  margin-top:20px;
+}
+
+/* RESULT */
+.result{
+  margin-top:15px;
+  font-size:18px;
+}
 </style>
 </head>
 
 <body>
 
-<h1>🎯 SPIN & MENANGKAN HADIAH</h1>
+<div class="container">
+  <h1>🎯 Lucky Spin</h1>
+  <p class="subtitle">Masukkan kode untuk mulai spin</p>
 
-<p id="kode-user"></p>
+  <p id="kode-user"></p>
 
-<input type="text" id="kode" placeholder="Masukkan kode disini">
-<br>
-<button id="spin-btn" class="btn">PUTAR</button>
+  <input type="text" id="kode" placeholder="Masukkan kode...">
+  <button id="spin-btn" class="btn">PUTAR</button>
 
-<canvas id="wheel" width="300" height="300"></canvas>
+  <canvas id="wheel" width="300" height="300"></canvas>
 
-<p id="result"></p>
+  <p id="result" class="result"></p>
+</div>
 
 <script>
-// ===== GENERATE KODE =====
+// ===============================
+// 🔐 GENERATE & SIMPAN KODE
+// ===============================
+const STORAGE_KEY = "kodeSpin";
+
 function generateKode(length=8){
-const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-let result="";
-for(let i=0;i<length;i++){
-result+=chars.charAt(Math.floor(Math.random()*chars.length));
-}
-return result;
+  const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  return Array.from({length},()=>chars[Math.floor(Math.random()*chars.length)]).join("");
 }
 
-// ===== SIMPAN KODE =====
-let kodeBenar=localStorage.getItem("kodeSpin");
+let kodeBenar = localStorage.getItem(STORAGE_KEY);
 
 if(!kodeBenar){
-kodeBenar=generateKode(8);
-localStorage.setItem("kodeSpin",kodeBenar);
+  kodeBenar = generateKode();
+  localStorage.setItem(STORAGE_KEY, kodeBenar);
 }
 
-// tampilkan kode
-document.getElementById("kode-user").innerHTML=
-"Kode kamu: <b>"+kodeBenar+"</b>";
+document.getElementById("kode-user").innerHTML =
+  "Kode kamu: <b>"+kodeBenar+"</b>";
 
-// ===== WHEEL =====
-const canvas=document.getElementById("wheel");
-const ctx=canvas.getContext("2d");
 
-const segments=["10 RB","5 RB","SCATTER","FREE SPIN","1 JT","20 RB"];
-const colors=["#ff4b2b","#ff416c","#00f7ff","#39ff14","#b026ff","#ffdd00"];
+// ===============================
+// 🎡 SETUP WHEEL
+// ===============================
+const canvas = document.getElementById("wheel");
+const ctx = canvas.getContext("2d");
 
-let startAngle=0;
-let spinning=false;
+const segments = ["10 RB","5 RB","SCATTER","FREE SPIN","1 JT","20 RB"];
+const colors = ["#ff4b2b","#ff416c","#00f7ff","#39ff14","#b026ff","#ffdd00"];
+
+let startAngle = 0;
+let spinning = false;
 
 function drawWheel(){
-const center=150;
-const radius=150;
-const arc=(2*Math.PI)/segments.length;
+  const center = canvas.width/2;
+  const radius = center;
+  const arc = (2*Math.PI)/segments.length;
 
-ctx.clearRect(0,0,300,300);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
 
-for(let i=0;i<segments.length;i++){
-ctx.beginPath();
-ctx.fillStyle=colors[i];
-ctx.moveTo(center,center);
-ctx.arc(center,center,radius,startAngle+i*arc,startAngle+(i+1)*arc);
-ctx.fill();
+  segments.forEach((text,i)=>{
+    ctx.beginPath();
+    ctx.fillStyle = colors[i];
+    ctx.moveTo(center,center);
+    ctx.arc(center,center,radius,startAngle+i*arc,startAngle+(i+1)*arc);
+    ctx.fill();
 
-ctx.save();
-ctx.translate(center,center);
-ctx.rotate(startAngle+i*arc+arc/2);
-ctx.fillStyle="#000";
-ctx.textAlign="right";
-ctx.font="14px Arial";
-ctx.fillText(segments[i],radius-10,5);
-ctx.restore();
-}
+    ctx.save();
+    ctx.translate(center,center);
+    ctx.rotate(startAngle+i*arc+arc/2);
+    ctx.fillStyle="#000";
+    ctx.textAlign="right";
+    ctx.font="14px Arial";
+    ctx.fillText(text,radius-10,5);
+    ctx.restore();
+  });
 }
 
 drawWheel();
 
-// ===== SPIN =====
-document.getElementById("spin-btn").onclick=function(){
 
-const inputKode=document.getElementById("kode").value;
+// ===============================
+// 🎯 SPIN FUNCTION
+// ===============================
+document.getElementById("spin-btn").onclick = () => {
 
-// VALIDASI
-if(inputKode!==kodeBenar){
-alert("❌ Kode salah!");
-return;
-}
+  const input = document.getElementById("kode").value.trim();
 
-if(spinning)return;
-spinning=true;
+  // VALIDASI KODE
+  if(input !== kodeBenar){
+    alert("❌ Kode salah!");
+    return;
+  }
 
-const spinAngle=Math.random()*3000+4000;
-const duration=4000;
-let start=null;
+  if(spinning) return;
+  spinning = true;
 
-function animate(timestamp){
-if(!start)start=timestamp;
-const progress=timestamp-start;
-const rotation=easeOut(progress,0,spinAngle,duration);
-startAngle=(rotation*Math.PI/180);
-drawWheel();
+  const spinAngle = Math.random()*3000 + 4000;
+  const duration = 4000;
+  let start = null;
 
-if(progress<duration){
-requestAnimationFrame(animate);
-}else{
-finishSpin();
-}
-}
+  const animate = (timestamp) => {
+    if(!start) start = timestamp;
 
-function finishSpin(){
-const degrees=(startAngle*180/Math.PI+90)%360;
-const index=Math.floor((360-degrees)/(360/segments.length))%segments.length;
+    const progress = timestamp - start;
+    const rotation = easeOut(progress,0,spinAngle,duration);
 
-document.getElementById("result").innerHTML=
-"🎉 Kamu dapat: <b>"+segments[index]+"</b>";
+    startAngle = rotation * Math.PI / 180;
+    drawWheel();
 
-spinning=false;
+    if(progress < duration){
+      requestAnimationFrame(animate);
+    }else{
+      finishSpin();
+    }
+  };
 
-// HAPUS KODE (1x pakai)
-localStorage.removeItem("kodeSpin");
-}
+  const finishSpin = () => {
+    const degrees = (startAngle*180/Math.PI + 90) % 360;
+    const index = Math.floor((360 - degrees)/(360/segments.length)) % segments.length;
 
-requestAnimationFrame(animate);
+    document.getElementById("result").innerHTML =
+      "🎉 Kamu dapat: <b>"+segments[index]+"</b>";
+
+    spinning = false;
+
+    // HAPUS KODE (1x pakai)
+    localStorage.removeItem(STORAGE_KEY);
+  };
+
+  requestAnimationFrame(animate);
 };
 
+
+// ===============================
+// 🎢 EASING
+// ===============================
 function easeOut(t,b,c,d){
-t/=d;t--;
-return c*(t*t*t+1)+b;
+  t/=d;
+  t--;
+  return c*(t*t*t+1)+b;
 }
 </script>
 
