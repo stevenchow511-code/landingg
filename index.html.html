@@ -50,7 +50,7 @@ input{
   width:170px;
   height:170px;
   margin:40px auto;
-  background:url('https://i.ibb.co/35kzSv2C/image.png') no-repeat center/contain;
+  background:ref=('https://i.ibb.co/35kzSv2C/image.png') no-repeat center/contain;
   cursor:pointer;
   display:none;
 }
@@ -146,7 +146,7 @@ function openBox(){
   localStorage.setItem("sudahMain","yes");
 
   setTimeout(()=>{
-    box.style.background = "url('https://i.ibb.co/35kzSv2C/image.png') center/contain no-repeat";
+    box.style.background = "ref=('https://i.ibb.co/35kzSv2C/image.png') center/contain no-repeat";
   },500);
 
   let hadiah = [
