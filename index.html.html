@@ -2,230 +2,117 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lucky Spin</title>
-
+<title>Spin Wheel</title>
 <style>
-:root{
-  --primary:#ff7a18;
-  --secondary:#ff3d00;
-}
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial, sans-serif;
-}
-
 body{
-  background:url("https://i.ibb.co/d0Rj3zmn/image.png") center/cover no-repeat fixed;
-  color:#fff;
-  text-align:center;
-}
-
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.6);
-  z-index:-1;
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    background:#111;
+    font-family:Arial;
+    color:white;
 }
 
 .container{
-  max-width:400px;
-  margin:auto;
-  padding:20px;
+    position:relative;
+    width:300px;
+    height:300px;
 }
 
-h1{
-  margin-bottom:10px;
+#wheel{
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    border:5px solid #fff;
+    transition: transform 4s ease-out;
 }
 
-.subtitle{
-  opacity:0.8;
-  margin-bottom:15px;
+.pointer{
+    position:absolute;
+    top:-20px;
+    left:50%;
+    transform:translateX(-50%);
+    width:0;
+    height:0;
+    border-left:15px solid transparent;
+    border-right:15px solid transparent;
+    border-bottom:25px solid red;
+    z-index:10;
 }
 
-/* INPUT */
-input{
-  width:100%;
-  padding:10px;
-  border-radius:8px;
-  border:none;
-  margin-bottom:10px;
-  text-align:center;
+button{
+    margin-top:30px;
+    padding:10px 20px;
+    font-size:16px;
+    border:none;
+    cursor:pointer;
+    border-radius:8px;
+    background:#00c853;
+    color:white;
 }
 
-/* BUTTON */
-.btn{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:25px;
-  background:linear-gradient(135deg,var(--primary),var(--secondary));
-  color:#fff;
-  font-weight:bold;
-  cursor:pointer;
-  transition:.3s;
-}
-
-.btn:hover{
-  transform:translateY(-2px);
-  box-shadow:0 8px 20px rgba(255,100,0,0.4);
-}
-
-/* CANVAS */
-canvas{
-  margin-top:20px;
-}
-
-/* RESULT */
-.result{
-  margin-top:15px;
-  font-size:18px;
+#result{
+    margin-top:20px;
+    font-size:18px;
 }
 </style>
 </head>
-
 <body>
 
 <div class="container">
-  <h1>🎯 Lucky Spin</h1>
-  <p class="subtitle">Masukkan kode untuk mulai spin</p>
-
-  <p id="kode-user"></p>
-
-  <input type="text" id="kode" placeholder="Masukkan kode...">
-  <button id="spin-btn" class="btn">PUTAR</button>
-
-  <canvas id="wheel" width="300" height="300"></canvas>
-
-  <p id="result" class="result"></p>
+    <div class="pointer"></div>
+    <canvas id="wheel" width="300" height="300"></canvas>
 </div>
 
+<button onclick="spin()">SPIN</button>
+<div id="result"></div>
+
 <script>
-// ===============================
-// 🔐 GENERATE & SIMPAN KODE
-// ===============================
-const STORAGE_KEY = "kodeSpin";
-
-function generateKode(length=8){
-  const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  return Array.from({length},()=>chars[Math.floor(Math.random()*chars.length)]).join("");
-}
-
-let kodeBenar = localStorage.getItem(STORAGE_KEY);
-
-if(!kodeBenar){
-  kodeBenar = generateKode();
-  localStorage.setItem(STORAGE_KEY, kodeBenar);
-}
-
-document.getElementById("kode-user").innerHTML =
-  "Kode kamu: <b>"+kodeBenar+"</b>";
-
-
-// ===============================
-// 🎡 SETUP WHEEL
-// ===============================
 const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
 
-const segments = ["10 RB","5 RB","SCATTER","FREE SPIN","1 JT","20 RB"];
-const colors = ["#ff4b2b","#ff416c","#00f7ff","#39ff14","#b026ff","#ffdd00"];
+const segments = ["10K", "20K", "0", "5K", "50K", "Try Again"];
+const colors = ["#ff4d4d","#4dff88","#ffd24d","#4da6ff","#b84dff","#ff7aa8"];
 
-let startAngle = 0;
-let spinning = false;
+let angle = 0;
 
 function drawWheel(){
-  const center = canvas.width/2;
-  const radius = center;
-  const arc = (2*Math.PI)/segments.length;
+    const arc = (2 * Math.PI) / segments.length;
+    for(let i=0;i<segments.length;i++){
+        ctx.beginPath();
+        ctx.fillStyle = colors[i];
+        ctx.moveTo(150,150);
+        ctx.arc(150,150,150,i*arc,(i+1)*arc);
+        ctx.fill();
+        ctx.save();
 
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  segments.forEach((text,i)=>{
-    ctx.beginPath();
-    ctx.fillStyle = colors[i];
-    ctx.moveTo(center,center);
-    ctx.arc(center,center,radius,startAngle+i*arc,startAngle+(i+1)*arc);
-    ctx.fill();
-
-    ctx.save();
-    ctx.translate(center,center);
-    ctx.rotate(startAngle+i*arc+arc/2);
-    ctx.fillStyle="#000";
-    ctx.textAlign="right";
-    ctx.font="14px Arial";
-    ctx.fillText(text,radius-10,5);
-    ctx.restore();
-  });
+        ctx.translate(150,150);
+        ctx.rotate(i*arc + arc/2);
+        ctx.fillStyle = "#000";
+        ctx.font = "bold 14px Arial";
+        ctx.fillText(segments[i], 60, 10);
+        ctx.restore();
+    }
 }
-
 drawWheel();
 
+function spin(){
+    let randomIndex = Math.floor(Math.random()*segments.length);
+    let arc = 360 / segments.length;
 
-// ===============================
-// 🎯 SPIN FUNCTION
-// ===============================
-document.getElementById("spin-btn").onclick = () => {
+    let stopAngle = 360 * 5 + (randomIndex * arc);
 
-  const input = document.getElementById("kode").value.trim();
+    angle += stopAngle;
 
-  // VALIDASI KODE
-  if(input !== kodeBenar){
-    alert("❌ Kode salah!");
-    return;
-  }
+    canvas.style.transform = `rotate(${angle}deg)`;
 
-  if(spinning) return;
-  spinning = true;
-
-  const spinAngle = Math.random()*3000 + 4000;
-  const duration = 4000;
-  let start = null;
-
-  const animate = (timestamp) => {
-    if(!start) start = timestamp;
-
-    const progress = timestamp - start;
-    const rotation = easeOut(progress,0,spinAngle,duration);
-
-    startAngle = rotation * Math.PI / 180;
-    drawWheel();
-
-    if(progress < duration){
-      requestAnimationFrame(animate);
-    }else{
-      finishSpin();
-    }
-  };
-
-  const finishSpin = () => {
-    const degrees = (startAngle*180/Math.PI + 90) % 360;
-    const index = Math.floor((360 - degrees)/(360/segments.length)) % segments.length;
-
-    document.getElementById("result").innerHTML =
-      "🎉 Kamu dapat: <b>"+segments[index]+"</b>";
-
-    spinning = false;
-
-    // HAPUS KODE (1x pakai)
-    localStorage.removeItem(STORAGE_KEY);
-  };
-
-  requestAnimationFrame(animate);
-};
-
-
-// ===============================
-// 🎢 EASING
-// ===============================
-function easeOut(t,b,c,d){
-  t/=d;
-  t--;
-  return c*(t*t*t+1)+b;
+    setTimeout(()=>{
+        document.getElementById("result").innerText =
+        "Hasil: " + segments[randomIndex];
+    },4000);
 }
 </script>
 
