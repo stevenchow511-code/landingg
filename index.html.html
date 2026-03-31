@@ -110,8 +110,8 @@ input{
 
 <div class="container">
 
-<h1>🎁 MYSTERY BOX GRATIS 🎁</h1>
-<p>Masukkan kode untuk membuka box</p>
+<h1>🎁 MYSTERY BOX FIRST TIME BONUS 🎁</h1>
+<p>Masukkan kode untuk membuka box, Klaim Ke Mimin </p>
 
 <input type="text" id="kode" placeholder="Masukkan kode disini">
 <button class="btn" onclick="cekKode()">Buka Akses</button>
@@ -127,7 +127,7 @@ input{
 <script>
 
 /* VALID CODE */
-let validKode = ["FREE10","HOKI777","BONUS2024"];
+let validKode = ["FREE10","HOKI666","BONUS2026"];
 
 /* CEK KODE */
 function cekKode(){
@@ -145,10 +145,10 @@ function cekKode(){
 /* OPEN BOX */
 function openBox(){
   let hadiah = [
-    "🎉 10.000 Coin",
-    "🔥 25.000 Coin",
-    "😱 50.000 Coin",
-    "💎 100.000 Coin",
+    "🎉 Rp 20.000",
+    "🔥 Rp 25.000",
+    "😱 Rp 50.000",
+    "💎 Rp 100.000",
     "🎁 Spin Gratis x3"
   ];
 
@@ -160,12 +160,12 @@ function openBox(){
   box.classList.add("open");
 
   setTimeout(()=>{
-    result.style.display="block";
+    result.style.display="🎁";
     result.innerHTML = "Kamu mendapatkan: <b>"+random+"</b>";
     
     /* REDIRECT DELAY */
     setTimeout(()=>{
-      window.location.href="https://google.com"; // GANTI LINK LU
+      window.location.href="https://shortq.link/klaim-spin"; // GANTI LINK LU
     },3000);
 
   },500);
@@ -174,8 +174,8 @@ function openBox(){
 /* FAKE LIVE NOTIF */
 let nama = ["Andi","Budi","Rina","Sari","Dika","Fajar","Agus","Nina"];
 let hadiahNotif = [
-  "mendapat 10.000 Coin",
-  "mendapat 50.000 Coin",
+  "mendapat Rp 20.000",
+  "mendapat Rp 50.000",
   "mendapat Jackpot!",
   "mendapat Spin Gratis"
 ];
