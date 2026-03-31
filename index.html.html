@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mystery Box Pro</title>
+<title>Mystery Gift Box</title>
 
 <style>
 body{
@@ -14,26 +14,45 @@ body{
   text-align:center;
 }
 
-/* CONTAINER */
 .container{
   max-width:400px;
   margin:auto;
   padding:20px;
 }
 
-/* TITLE */
 h1{
   color:#ffd700;
 }
 
+/* INPUT */
+input{
+  width:100%;
+  padding:12px;
+  margin-top:15px;
+  border:none;
+  border-radius:8px;
+  text-align:center;
+}
+
+.btn{
+  margin-top:10px;
+  padding:12px;
+  width:100%;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(45deg,#ff7a18,#ff3d00);
+  color:white;
+  cursor:pointer;
+}
+
 /* BOX */
 .box{
-  width:160px;
-  height:160px;
+  width:170px;
+  height:170px;
   margin:40px auto;
-  background:url('https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdjd5MmlxdThkc25hOHJ0MTRlZncyOHJkczZrcHA5d3VhNGo3NjMydyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wWcLeiYQ61220DMagm/giphy.gif') no-repeat center/contain;
+  background:url('https://media.giphy.com/media/xT0xeJpnrWC4XWblEk/giphy.gif') no-repeat center/contain;
   cursor:pointer;
-  transition:0.3s;
+  display:none;
 }
 
 /* SHAKE */
@@ -42,9 +61,9 @@ h1{
 }
 
 @keyframes shake{
-  25%{transform:rotate(10deg);}
-  50%{transform:rotate(-10deg);}
-  75%{transform:rotate(5deg);}
+  25%{transform:rotate(8deg);}
+  50%{transform:rotate(-8deg);}
+  75%{transform:rotate(4deg);}
 }
 
 /* RESULT */
@@ -52,28 +71,6 @@ h1{
   display:none;
   margin-top:20px;
   font-size:18px;
-}
-
-/* GLOW EFFECT */
-.glow{
-  animation:glow 1s infinite alternate;
-}
-
-@keyframes glow{
-  from{filter:drop-shadow(0 0 5px gold);}
-  to{filter:drop-shadow(0 0 20px gold);}
-}
-
-/* BUTTON */
-.btn{
-  margin-top:20px;
-  padding:12px;
-  width:100%;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(45deg,#ff7a18,#ff3d00);
-  color:white;
-  cursor:pointer;
 }
 
 /* NOTIF */
@@ -95,41 +92,59 @@ h1{
   opacity:1;
   transform:translateY(0);
 }
-
 </style>
 </head>
 
 <body>
 
 <div class="container">
-<h1>🎁 MYSTERY BOX 🎁</h1>
-<p>Klik box untuk membuka hadiahmu</p>
 
-<div class="box glow" id="box" onclick="openBox()"></div>
+<h1>🎁 MYSTERY GIFT 🎁</h1>
+<p>Masukkan kode untuk membuka kado</p>
+
+<input type="text" id="kode" placeholder="Masukkan kode disini">
+<button class="btn" onclick="cekKode()">Buka Akses</button>
+
+<!-- BOX -->
+<div class="box" id="box" onclick="openBox()"></div>
 
 <div class="result" id="result"></div>
 
-<button class="btn" onclick="https://alurinaja.com/()">KLAIM DISINI</button>
+<button class="btn" onclick="location.reload()">Coba Lagi</button>
+
 </div>
 
 <div class="notif" id="notif"></div>
 
 <script>
 
+/* VALID CODE */
+let validKode = ["FREE10","HOKI777","GIFT2024"];
+
+/* CEK KODE */
+function cekKode(){
+  let input = document.getElementById("kode").value;
+  let box = document.getElementById("box");
+
+  if(validKode.includes(input)){
+    alert("Kode benar! Klik kado 🎉");
+    box.style.display="block";
+  }else{
+    alert("Kode salah!");
+  }
+}
+
+/* OPEN BOX */
 function openBox(){
   let box = document.getElementById("box");
   let result = document.getElementById("result");
 
-  // STEP 1: SHAKE
-  box.classList.remove("glow");
   box.classList.add("shake");
 
-  // STEP 2: GANTI KE GIF BUKA
   setTimeout(()=>{
-    box.style.background = "url('https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif') center/contain no-repeat";
+    box.style.background = "url('https://media.giphy.com/media/5GoVLqeAOo6PK/giphy.gif') center/contain no-repeat";
   },500);
 
-  // STEP 3: KELUAR HADIAH
   let hadiah = [
     "🎉 10.000 Coin",
     "🔥 25.000 Coin",
@@ -144,14 +159,12 @@ function openBox(){
     result.style.display="block";
     result.innerHTML = "Kamu mendapatkan:<br><b>"+random+"</b>";
   },1200);
-
 }
 
-/* POPUP FAKE */
-let nama = ["Andi","Budi","Rina","Sari","Dika","Fajar","Agus","Nina"];
+/* POPUP */
+let nama = ["Andi","Budi","Rina","Sari","Dika","Fajar"];
 let hadiahNotif = [
   "mendapat 10.000 Coin",
-  "mendapat 50.000 Coin",
   "mendapat Jackpot!",
   "mendapat Spin Gratis"
 ];
