@@ -2,7 +2,9 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Spin Wheel</title>
+
 <style>
 body{
     margin:0;
@@ -16,40 +18,45 @@ body{
     color:white;
 }
 
+/* RESPONSIVE CONTAINER */
 .container{
     position:relative;
-    width:300px;
-    height:300px;
+    width:90vw;
+    max-width:320px;
+    aspect-ratio:1/1;
 }
 
+/* CANVAS RESPONSIVE */
 #wheel{
     width:100%;
     height:100%;
     border-radius:50%;
     border:5px solid #fff;
-    transition: transform 4s ease-out;
+    transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
 }
 
+/* POINTER / JARUM */
 .pointer{
     position:absolute;
-    top:-20px;
+    top:-18px;
     left:50%;
     transform:translateX(-50%);
     width:0;
     height:0;
-    border-left:15px solid transparent;
-    border-right:15px solid transparent;
-    border-bottom:25px solid red;
+    border-left:18px solid transparent;
+    border-right:18px solid transparent;
+    border-bottom:30px solid #ff0000;
     z-index:10;
+    filter: drop-shadow(0 0 6px red);
 }
 
 button{
     margin-top:30px;
-    padding:10px 20px;
+    padding:12px 25px;
     font-size:16px;
     border:none;
     cursor:pointer;
-    border-radius:8px;
+    border-radius:10px;
     background:#00c853;
     color:white;
 }
@@ -57,9 +64,11 @@ button{
 #result{
     margin-top:20px;
     font-size:18px;
+    text-align:center;
 }
 </style>
 </head>
+
 <body>
 
 <div class="container">
@@ -81,29 +90,36 @@ let angle = 0;
 
 function drawWheel(){
     const arc = (2 * Math.PI) / segments.length;
+
     for(let i=0;i<segments.length;i++){
         ctx.beginPath();
         ctx.fillStyle = colors[i];
         ctx.moveTo(150,150);
         ctx.arc(150,150,150,i*arc,(i+1)*arc);
         ctx.fill();
-        ctx.save();
 
+        ctx.save();
         ctx.translate(150,150);
         ctx.rotate(i*arc + arc/2);
         ctx.fillStyle = "#000";
         ctx.font = "bold 14px Arial";
-        ctx.fillText(segments[i], 60, 10);
+        ctx.textAlign = "center";
+        ctx.fillText(segments[i], 90, 5);
         ctx.restore();
     }
 }
+
 drawWheel();
 
 function spin(){
-    let randomIndex = Math.floor(Math.random()*segments.length);
+    let randomIndex = Math.floor(Math.random() * segments.length);
     let arc = 360 / segments.length;
 
-    let stopAngle = 360 * 5 + (randomIndex * arc);
+    // offset pointer (karena jarum di atas)
+    let offset = 270;
+
+    // berhenti tepat di tengah segment
+    let stopAngle = (360 * 5) + (offset - (randomIndex * arc) - arc/2);
 
     angle += stopAngle;
 
