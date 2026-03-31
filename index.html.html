@@ -110,7 +110,10 @@ input{
 
 <div class="result" id="result"></div>
 
-<button class="btn" onclick="location.reload()">Ambil Disini</button>
+<button class="btn" onclick="window.location.href='https://alurinaja.com/'">
+  Klaim Hadiah
+  
+</button>
 
 </div>
 
@@ -185,10 +188,15 @@ function showNotif(){
 }
 // CEK SAAT HALAMAN DIBUKA
 window.onload = function(){
-  if(localStorage.getItem("sudahMain")){
+  let sudahMain = localStorage.getItem("sudahMain");
+
+  if(sudahMain){
     document.getElementById("box").style.display="none";
     document.getElementById("result").style.display="block";
-    document.getElementById("result").innerHTML = "⚠️ Kamu sudah membuka hadiah hari ini";
+    document.getElementById("result").innerHTML = "⚠️ Kamu sudah klaim hadiah hari ini";
+
+    // OPTIONAL: disable tombol kode
+    document.getElementById("kode").disabled = true;
   }
 }
 setInterval(showNotif,4000);
