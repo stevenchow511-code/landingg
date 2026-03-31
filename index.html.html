@@ -110,7 +110,7 @@ input{
 
 <div class="result" id="result"></div>
 
-<button class="btn" onclick="location.reload()">Coba Lagi</button>
+<button class="btn" onclick="location.reload()">Ambil Disini</button>
 
 </div>
 
@@ -140,6 +140,7 @@ function openBox(){
   let result = document.getElementById("result");
 
   box.classList.add("shake");
+  localStorage.setItem("sudahMain","yes");
 
   setTimeout(()=>{
     box.style.background = "url('https://media.giphy.com/media/5GoVLqeAOo6PK/giphy.gif') center/contain no-repeat";
@@ -182,7 +183,14 @@ function showNotif(){
     notif.classList.remove("show");
   },3000);
 }
-
+// CEK SAAT HALAMAN DIBUKA
+window.onload = function(){
+  if(localStorage.getItem("sudahMain")){
+    document.getElementById("box").style.display="none";
+    document.getElementById("result").style.display="block";
+    document.getElementById("result").innerHTML = "⚠️ Kamu sudah membuka hadiah hari ini";
+  }
+}
 setInterval(showNotif,4000);
 
 </script>
