@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mystery Box Event</title>
+<title>Mystery Box Pro</title>
 
 <style>
 body{
@@ -16,60 +16,64 @@ body{
 
 /* CONTAINER */
 .container{
-  padding:20px;
   max-width:400px;
   margin:auto;
+  padding:20px;
 }
 
 /* TITLE */
 h1{
-  font-size:26px;
   color:#ffd700;
-}
-
-/* INPUT */
-input{
-  width:100%;
-  padding:12px;
-  margin-top:15px;
-  border:none;
-  border-radius:8px;
-  outline:none;
-  text-align:center;
-}
-
-/* BUTTON */
-.btn{
-  margin-top:15px;
-  padding:12px;
-  width:100%;
-  border:none;
-  background:linear-gradient(45deg,#ff7a18,#ff3d00);
-  color:white;
-  font-size:16px;
-  border-radius:10px;
-  cursor:pointer;
-}
-
-.btn:disabled{
-  background:gray;
 }
 
 /* BOX */
 .box{
   width:160px;
   height:160px;
-  margin:30px auto;
-  background:url('https://cdn-icons-png.flaticon.com/512/869/869636.png') no-repeat center/contain;
+  margin:40px auto;
+  background:url('https://media.giphy.com/media/3o6ZtpxSZbQRRnwCKQ/giphy.gif') no-repeat center/contain;
   cursor:pointer;
-  display:none;
+  transition:0.3s;
+}
+
+/* SHAKE */
+.shake{
+  animation:shake 0.5s;
+}
+
+@keyframes shake{
+  25%{transform:rotate(10deg);}
+  50%{transform:rotate(-10deg);}
+  75%{transform:rotate(5deg);}
 }
 
 /* RESULT */
 .result{
-  font-size:18px;
-  margin-top:20px;
   display:none;
+  margin-top:20px;
+  font-size:18px;
+}
+
+/* GLOW EFFECT */
+.glow{
+  animation:glow 1s infinite alternate;
+}
+
+@keyframes glow{
+  from{filter:drop-shadow(0 0 5px gold);}
+  to{filter:drop-shadow(0 0 20px gold);}
+}
+
+/* BUTTON */
+.btn{
+  margin-top:20px;
+  padding:12px;
+  width:100%;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(45deg,#ff7a18,#ff3d00);
+  color:white;
+  cursor:pointer;
 }
 
 /* NOTIF */
@@ -92,90 +96,62 @@ input{
   transform:translateY(0);
 }
 
-/* ANIM */
-.open{
-  animation:shake 0.5s;
-}
-
-@keyframes shake{
-  25%{transform:rotate(10deg);}
-  50%{transform:rotate(-10deg);}
-  75%{transform:rotate(5deg);}
-}
-
 </style>
 </head>
 
 <body>
 
 <div class="container">
+<h1>🎁 MYSTERY BOX 🎁</h1>
+<p>Klik box untuk membuka hadiahmu</p>
 
-<h1>🎁 MYSTERY BOX FIRST TIME BONUS 🎁</h1>
-<p>Masukkan kode untuk membuka box, Klaim Ke Mimin </p>
-
-<input type="text" id="kode" placeholder="Masukkan kode disini">
-<button class="btn" onclick="cekKode()">Buka Akses</button>
-
-<div class="box" id="box" onclick="openBox()"></div>
+<div class="box glow" id="box" onclick="openBox()"></div>
 
 <div class="result" id="result"></div>
 
+<button class="btn" onclick="location.reload()">Coba Lagi</button>
 </div>
 
 <div class="notif" id="notif"></div>
 
 <script>
 
-/* VALID CODE */
-let validKode = ["FREE10","HOKI666","BONUS2026"];
-
-/* CEK KODE */
-function cekKode(){
-  let input = document.getElementById("kode").value;
-  let box = document.getElementById("box");
-
-  if(validKode.includes(input)){
-    alert("Kode berhasil! Silakan buka box 🎉");
-    box.style.display="block";
-  }else{
-    alert("Kode salah!");
-  }
-}
-
-/* OPEN BOX */
 function openBox(){
+  let box = document.getElementById("box");
+  let result = document.getElementById("result");
+
+  // STEP 1: SHAKE
+  box.classList.remove("glow");
+  box.classList.add("shake");
+
+  // STEP 2: GANTI KE GIF BUKA
+  setTimeout(()=>{
+    box.style.background = "url('https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif') center/contain no-repeat";
+  },500);
+
+  // STEP 3: KELUAR HADIAH
   let hadiah = [
-    "🎉 Rp 20.000",
-    "🔥 Rp 25.000",
-    "😱 Rp 50.000",
-    "💎 Rp 100.000",
+    "🎉 10.000 Coin",
+    "🔥 25.000 Coin",
+    "😱 50.000 Coin",
+    "💎 100.000 Coin",
     "🎁 Spin Gratis x3"
   ];
 
-  let result = document.getElementById("result");
-  let box = document.getElementById("box");
-
   let random = hadiah[Math.floor(Math.random()*hadiah.length)];
 
-  box.classList.add("open");
-
   setTimeout(()=>{
-    result.style.display="🎁";
-    result.innerHTML = "Kamu mendapatkan: <b>"+random+"</b>";
-    
-    /* REDIRECT DELAY */
-    setTimeout(()=>{
-      window.location.href="https://shortq.link/klaim-spin"; // GANTI LINK LU
-    },3000);
+    result.style.display="block";
+    result.innerHTML = "Kamu mendapatkan:<br><b>"+random+"</b>";
+  },1200);
 
-  },500);
 }
 
-/* FAKE LIVE NOTIF */
+/* POPUP FAKE */
 let nama = ["Andi","Budi","Rina","Sari","Dika","Fajar","Agus","Nina"];
 let hadiahNotif = [
-  "mendapat Rp 20.000",
-  "mendapat Rp 50.000",
+  "mendapat 10.000 Coin",
+  "mendapat 50.000 Coin",
   "mendapat Jackpot!",
   "mendapat Spin Gratis"
 ];
