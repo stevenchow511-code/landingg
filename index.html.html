@@ -3,30 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Spin Wheel</title>
+<title>Spin Wheel Premium</title>
 
 <style>
 body{
     margin:0;
-    height:100vh;
+    min-height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
     flex-direction:column;
-    background:#111;
+    background:linear-gradient(135deg,#111,#1c1c1c);
     font-family:Arial;
     color:white;
 }
 
-/* RESPONSIVE CONTAINER */
+/* INPUT KODE */
+input{
+    padding:10px;
+    border-radius:8px;
+    border:none;
+    margin-bottom:10px;
+    width:200px;
+    text-align:center;
+}
+
+/* BUTTON */
+button{
+    margin-top:10px;
+    padding:12px 25px;
+    font-size:16px;
+    border:none;
+    cursor:pointer;
+    border-radius:10px;
+    background:#00c853;
+    color:white;
+    font-weight:bold;
+}
+
+/* CONTAINER */
 .container{
     position:relative;
     width:90vw;
     max-width:320px;
     aspect-ratio:1/1;
+    margin-top:10px;
 }
 
-/* CANVAS RESPONSIVE */
+/* WHEEL */
 #wheel{
     width:100%;
     height:100%;
@@ -35,7 +59,7 @@ body{
     transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
 }
 
-/* POINTER / JARUM */
+/* POINTER */
 .pointer{
     position:absolute;
     top:-18px;
@@ -45,49 +69,75 @@ body{
     height:0;
     border-left:18px solid transparent;
     border-right:18px solid transparent;
-    border-bottom:30px solid #ff0000;
-    z-index:10;
-    filter: drop-shadow(0 0 6px red);
+    border-bottom:30px solid red;
+    filter:drop-shadow(0 0 6px red);
 }
 
-button{
-    margin-top:30px;
-    padding:12px 25px;
-    font-size:16px;
-    border:none;
-    cursor:pointer;
-    border-radius:10px;
-    background:#00c853;
-    color:white;
-}
-
-#result{
-    margin-top:20px;
-    font-size:18px;
+/* RESULT POPUP */
+#popup{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background:white;
+    color:black;
+    padding:20px;
+    border-radius:12px;
+    display:none;
     text-align:center;
+    z-index:999;
+}
+
+/* OVERLAY */
+#overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.5);
+    display:none;
 }
 </style>
 </head>
 
 <body>
 
+<input id="code" placeholder="Masukkan Kode Spin">
+
+<button onclick="spin()">SPIN</button>
+
 <div class="container">
     <div class="pointer"></div>
     <canvas id="wheel" width="300" height="300"></canvas>
 </div>
 
-<button onclick="spin()">SPIN</button>
-<div id="result"></div>
+<div id="overlay"></div>
+
+<div id="popup">
+    <h2 id="resultText"></h2>
+    <button onclick="closePopup()">OK</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
 const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
 
-const segments = ["10K", "20K", "0", "5K", "50K", "Try Again"];
+const segments = ["10K","20K","0","5K","50K","Try Again"];
+
+// 🎯 WEIGHTED (peluang bisa diatur)
+const weighted = [
+"10K","20K","0","5K",
+"Try Again","Try Again","Try Again",
+"10K","5K","0",
+"50K"
+];
+
 const colors = ["#ff4d4d","#4dff88","#ffd24d","#4da6ff","#b84dff","#ff7aa8"];
 
 let angle = 0;
+let spinning = false;
 
+/* DRAW WHEEL */
 function drawWheel(){
     const arc = (2 * Math.PI) / segments.length;
 
@@ -108,27 +158,61 @@ function drawWheel(){
         ctx.restore();
     }
 }
-
 drawWheel();
 
+/* SOUND */
+const spinSound = new Audio("https://www.soundjay.com/mechanical/sounds/click-07.mp3");
+const winSound = new Audio("https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3");
+
+/* SPIN */
 function spin(){
-    let randomIndex = Math.floor(Math.random() * segments.length);
+
+    if(spinning) return;
+
+    let code = document.getElementById("code").value;
+
+    // 🔐 validasi kode
+    if(code !== "FREE123"){
+        alert("Kode salah!");
+        return;
+    }
+
+    spinning = true;
+
+    let randomResult = weighted[Math.floor(Math.random()*weighted.length)];
+    let index = segments.indexOf(randomResult);
     let arc = 360 / segments.length;
 
-    // offset pointer (karena jarum di atas)
     let offset = 270;
-
-    // berhenti tepat di tengah segment
-    let stopAngle = (360 * 5) + (offset - (randomIndex * arc) - arc/2);
+    let stopAngle = (360 * 5) + (offset - (index * arc) - arc/2);
 
     angle += stopAngle;
+
+    spinSound.play();
 
     canvas.style.transform = `rotate(${angle}deg)`;
 
     setTimeout(()=>{
-        document.getElementById("result").innerText =
-        "Hasil: " + segments[randomIndex];
+        spinning = false;
+        showPopup(randomResult);
+
+        if(randomResult !== "Try Again"){
+            confetti();
+            winSound.play();
+        }
     },4000);
+}
+
+/* POPUP */
+function showPopup(text){
+    document.getElementById("resultText").innerText = "Hasil: " + text;
+    document.getElementById("popup").style.display = "block";
+    document.getElementById("overlay").style.display = "block";
+}
+
+function closePopup(){
+    document.getElementById("popup").style.display = "none";
+    document.getElementById("overlay").style.display = "none";
 }
 </script>
 
